@@ -11,7 +11,7 @@ export class UsersService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
     private readonly configService: ConfigService,
-  ) {}
+  ) { }
 
   async signUp(dto) {
     dto.password = await bcrypt.hash(dto.password, 10);
@@ -20,20 +20,24 @@ export class UsersService {
   }
 
   async signIn(dto) {
-    console.log('SignIn DTO:', dto);
-    const user = await this.userModel.findOne({ email: dto.email });
-    if (!user || !(await bcrypt.compare(dto.password, user.password))) {
-      throw new UnauthorizedException('Invalid credentials');
+    try {
+      const user = await this.userModel.findOne({ email: dto.email });
+      if (!user || !(await bcrypt.compare(dto.password, user.password))) {
+        throw new UnauthorizedException('Invalid credentials');
+      }
+      const isMatch = await bcrypt.compare(dto.password, user.password);
+      const jwtSecret = this.configService.getOrThrow<string>('JWT_SECRET');
+      const token = jwt.sign(
+        { email: user.email, roles: [user.role] },
+        jwtSecret,
+        { expiresIn: '1d' },
+      );
+      return { token };
     }
-
-    const jwtSecret = this.configService.getOrThrow<string>('JWT_SECRET');
-    const token = jwt.sign(
-      { email: user.email, roles: [user.role] },
-      jwtSecret,
-      { expiresIn: '1d' },
-    );
-
-    return { token };
+    catch (error) {
+      console.error('SignIn Error:', error);
+      throw error;
+    }
   }
 
   async myProfile(email: string) {
