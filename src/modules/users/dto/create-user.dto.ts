@@ -6,7 +6,7 @@ export class CreateUserDto {
         example:"a@b.com"
     })
     @IsEmail()
-    email: string;
+    email!: string;
 
     @ApiProperty({
         example: 'password123',
@@ -14,13 +14,13 @@ export class CreateUserDto {
     @IsString()
     @MinLength(8)
     @Matches(/^[a-zA-Z0-9]+$/, { message: 'Password must be alphanumeric' })
-    password: string;
+    password!: string;
 
     @ApiProperty({
         example:"mariam ahmed"
     })
     @IsString()
-    fullName: string;
+    fullName!: string;
 
     @ApiProperty({
         example: 23,
@@ -28,15 +28,15 @@ export class CreateUserDto {
     @IsNumber()
     @Min(16)
     @Max(60)
-    age: number;
+    age!: number;
 
     @ApiProperty({
         example: '01012345678',
     })
     @Matches(/^01\d{9}$/, { message: 'Mobile number must be 11 digits and start with 01' })
-    mobileNumber: string;
+    mobileNumber!: string;
 
     @ApiProperty({ enum: ['admin', 'normal'] })
     @IsIn(['admin', 'normal'])
-    role: string;
+    role!: string;
 }

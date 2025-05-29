@@ -6,12 +6,12 @@ export class SignInDto {
         example: "a@b.com"
     })
     @IsEmail()
-    email: string;
+    email!: string;
 
     @ApiProperty({
         example: 'password123',
     })
     @IsString()
     @MinLength(8)
-    password: string;
+    password!: string;
 }

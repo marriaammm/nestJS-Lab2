@@ -1,5 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { JWTPayload } from '../../lib/interfaces';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -11,9 +12,9 @@ export class RolesGuard implements CanActivate {
         if (!requiredRoles) return true;
 
         const request = context.switchToHttp().getRequest();
-        const user = request['jwtPayload'];
+        const user: JWTPayload = request['jwtPayload'];
 
-        if (!user?.roles?.some(role => requiredRoles.includes(role))) {
+        if (!user?.roles?.some((role: string) => requiredRoles.includes(role))) {
             throw new ForbiddenException('You do not have permission to access this route');
         }
 
