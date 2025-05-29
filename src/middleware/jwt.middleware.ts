@@ -6,8 +6,16 @@ import { Request, Response, NextFunction } from 'express';
 export class JwtMiddleware implements NestMiddleware {
     use(req: Request, res: Response, next: NextFunction) {
         const authHeader = req.headers['authorization'];
-        const token = authHeader?.split(' ')[1];
-        if (!token) throw new UnauthorizedException('No token provided');
+
+        if (!authHeader) {
+            throw new UnauthorizedException('No authorization header provided');
+        }
+
+        const token = authHeader.split(' ')[1];
+
+        if (!token) {
+            throw new UnauthorizedException('No token provided');
+        }
 
         try {
             const payload = jwt.verify(token, process.env.JWT_SECRET || 'defaultSecret');
